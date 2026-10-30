@@ -1,0 +1,28 @@
+:root {
+  --bg: #faf6f2;
+  --bg-soft: #faf5f0;
+  --brand: #8d2236;
+  --brand-dark: #6f1a2a;
+  --accent: #fbbf24;
+  --ink: #2b1d20;
+  --muted: #7a6a6d;
+  --line: #eadfd8;
+  --white: #fff;
+  --danger: #b42318;
+  --ok: #1a7f4b;
+  --font-heading: 'Cormorant Garamond', serif;
+  --font-text: 'Manrope', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-heading); margin: 0; }
+a { color: var(--brand); }
