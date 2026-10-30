@@ -6,6 +6,8 @@ Landing page with an admin panel for OG Creations (film and creative production,
 - **Backend:** plain PHP, no framework (`backend/`) - a small JSON API under `/api`
 - **Database:** MySQL (TiDB Cloud in production)
 
+> A step-by-step guide in simple English (updating the site, free-plan limits, fixing problems) is in **DEPLOYMENT.md**.
+
 ## Folders
 
 ```
