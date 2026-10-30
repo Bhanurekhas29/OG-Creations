@@ -28,6 +28,14 @@ CREATE TABLE IF NOT EXISTS password_resets (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS media (
+    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name       VARCHAR(120) NOT NULL UNIQUE,
+    mime       VARCHAR(60)  NOT NULL,
+    data       MEDIUMBLOB   NOT NULL,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS site_settings (
     setting_key   VARCHAR(80) PRIMARY KEY,
     setting_value TEXT NULL
@@ -62,15 +70,15 @@ CREATE TABLE IF NOT EXISTS services (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Seed the default services once.
-INSERT INTO services (title, description, sort_order)
-SELECT t.title, t.description, t.sort_order FROM (
-    SELECT 'Movies' AS title, 'Feature films developed and delivered from script to screen.' AS description, 1 AS sort_order UNION ALL
-    SELECT 'Web Series', 'Episodic storytelling built for streaming audiences.', 2 UNION ALL
-    SELECT 'Casting', 'The right face for every role — discovered, tested, shaped.', 3 UNION ALL
-    SELECT 'Ad Shoots', 'Commercials and brand films crafted to hold attention in seconds.', 4 UNION ALL
-    SELECT 'Modeling', 'Portfolios and campaigns that frame talent at its best.', 5 UNION ALL
-    SELECT 'Events', 'Launches, shows and celebrations captured with cinematic care.', 6 UNION ALL
-    SELECT 'Post Production', 'Editing, colour and sound finished to a single standard.', 7
+INSERT INTO services (title, description, image, sort_order)
+SELECT t.title, t.description, t.image, t.sort_order FROM (
+    SELECT 'Movies' AS title, 'Feature films developed and delivered from script to screen.' AS description, '/images/service-movies.jpg' AS image, 1 AS sort_order UNION ALL
+    SELECT 'Web Series', 'Episodic storytelling built for streaming audiences.', '/images/service-web-series.jpg', 2 UNION ALL
+    SELECT 'Casting', 'The right face for every role — discovered, tested, shaped.', '/images/service-casting.jpg', 3 UNION ALL
+    SELECT 'Ad Shoots', 'Commercials and brand films crafted to hold attention in seconds.', '/images/service-ad-shoots.jpg', 4 UNION ALL
+    SELECT 'Modeling', 'Portfolios and campaigns that frame talent at its best.', '/images/service-modeling.jpg', 5 UNION ALL
+    SELECT 'Events', 'Launches, shows and celebrations captured with cinematic care.', '/images/service-events.jpg', 6 UNION ALL
+    SELECT 'Post Production', 'Editing, colour and sound finished to a single standard.', '/images/service-post-production.jpg', 7
 ) t WHERE NOT EXISTS (SELECT 1 FROM services);
 
 CREATE TABLE IF NOT EXISTS works (
@@ -84,13 +92,13 @@ CREATE TABLE IF NOT EXISTS works (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Seed five placeholder projects once.
-INSERT INTO works (title, category, sort_order)
-SELECT t.title, t.category, t.sort_order FROM (
-    SELECT 'Project Title' AS title, 'Movies' AS category, 1 AS sort_order UNION ALL
-    SELECT 'Project Title', 'Web Series', 2 UNION ALL
-    SELECT 'Project Title', 'Ad Shoots', 3 UNION ALL
-    SELECT 'Project Title', 'Modeling', 4 UNION ALL
-    SELECT 'Project Title', 'Events', 5
+INSERT INTO works (title, category, thumbnail, sort_order)
+SELECT t.title, t.category, t.thumbnail, t.sort_order FROM (
+    SELECT 'Project Title' AS title, 'Movies' AS category, '/images/work-movies.jpg' AS thumbnail, 1 AS sort_order UNION ALL
+    SELECT 'Project Title', 'Web Series', '/images/work-web-series.jpg', 2 UNION ALL
+    SELECT 'Project Title', 'Ad Shoots', '/images/work-ad-shoots.jpg', 3 UNION ALL
+    SELECT 'Project Title', 'Modeling', '/images/work-modeling.jpg', 4 UNION ALL
+    SELECT 'Project Title', 'Events', '/images/work-events.jpg', 5
 ) t WHERE NOT EXISTS (SELECT 1 FROM works);
 
 CREATE TABLE IF NOT EXISTS process_steps (
@@ -127,12 +135,12 @@ CREATE TABLE IF NOT EXISTS upcoming_projects (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Seed one sample project once.
-INSERT INTO upcoming_projects (title, tagline, lead_actor, lead_actress, supporting_cast, release_date, status_label, sort_order)
+INSERT INTO upcoming_projects (title, tagline, lead_actor, lead_actress, supporting_cast, release_date, status_label, image, sort_order)
 SELECT 'The Silent Chapter', 'Some truths are better left unsaid.
 But he chose to speak.', 'Vikram Raj', 'Ananya Rao',
        'Meera Nair
 Rithvik Shankar
-Sathish Kumar', 'Dec 2025', 'In Cinemas', 1
+Sathish Kumar', 'Dec 2025', 'In Cinemas', '/images/upcoming-silent-chapter.jpg', 1
 WHERE NOT EXISTS (SELECT 1 FROM upcoming_projects);
 
 CREATE TABLE IF NOT EXISTS why_items (
@@ -170,8 +178,8 @@ DELETE FROM site_settings WHERE setting_key IN ('logo', 'tagline');
 
 INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES
     ('site_name', 'OG Creations'),
-    ('header_logo', '/images/logo.svg'),
-    ('footer_logo', '/images/logo.svg'),
+    ('header_logo', '/images/logo-medallion.jpg'),
+    ('footer_logo', '/images/logo-medallion.jpg'),
     ('meta_title', 'OG Creations - Concept to Creation'),
     ('meta_description', ''),
     ('meta_keywords', ''),
@@ -188,7 +196,7 @@ INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES
     ('hero_btn2_label', 'Explore Our Craft'),
     ('hero_btn2_url', '#services'),
     ('hero_tags', 'Direction\nCinematography\nArt Direction\nPost'),
-    ('hero_bg_image', ''),
+    ('hero_bg_image', '/images/hero-bg.jpg'),
     ('marquee_enabled', '1'),
     ('marquee_items', 'Movies\nWeb Series\nCasting\nAd Shoots\nModeling\nEvents'),
     ('marquee_speed', '30'),
@@ -199,9 +207,9 @@ INSERT IGNORE INTO site_settings (setting_key, setting_value) VALUES
     ('studio_text2', 'We keep our sets bright and our crews sharp. Whether the brief is a feature film, a streaming series or a sixty-second spot, the work is art-directed frame by frame — nothing left to default.'),
     ('studio_btn_label', 'See What We Produce'),
     ('studio_btn_url', '#services'),
-    ('studio_image1', ''),
-    ('studio_image2', ''),
-    ('studio_image3', ''),
+    ('studio_image1', '/images/studio-1.jpg'),
+    ('studio_image2', '/images/studio-2.jpg'),
+    ('studio_image3', '/images/studio-3.jpg'),
     ('services_eyebrow', 'Our Services'),
     ('services_heading', 'What We Create'),
     ('works_eyebrow', 'Featured Projects'),
@@ -213,19 +221,19 @@ Modeling
 Events'),
     ('bts_heading_bold', 'Behind'),
     ('bts_heading_light', 'The Scenes'),
-    ('bts_1_image', ''), ('bts_1_caption', 'Scene 72 · Take 4'),
-    ('bts_2_image', ''), ('bts_2_caption', 'The quiet before the scene'),
-    ('bts_3_image', ''), ('bts_3_caption', 'Every frame earns its place'),
+    ('bts_1_image', '/images/bts-1.jpg'), ('bts_1_caption', 'Scene 72 · Take 4'),
+    ('bts_2_image', '/images/bts-2.jpg'), ('bts_2_caption', 'The quiet before the scene'),
+    ('bts_3_image', '/images/bts-3.jpg'), ('bts_3_caption', 'Every frame earns its place'),
     ('bts_3_subtitle', 'A working set, from first light to last.'),
-    ('bts_4_image', ''), ('bts_4_caption', 'Every frame, monitored'),
-    ('bts_5_image', ''), ('bts_5_caption', 'Golden hour, on location'),
+    ('bts_4_image', '/images/bts-4.jpg'), ('bts_4_caption', 'Every frame, monitored'),
+    ('bts_5_image', '/images/bts-5.jpg'), ('bts_5_caption', 'Golden hour, on location'),
     ('process_eyebrow', 'Our Production Process'),
     ('process_heading', 'Five Stages, One Vision'),
     ('upcoming_heading', 'Upcoming Projects'),
     ('upcoming_subtitle', 'Exciting Stories · Powerful Performances · Coming Soon'),
     ('why_eyebrow', 'Why Choose OG Creations'),
     ('why_heading', 'Crafted with Intent'),
-    ('why_image', ''),
+    ('why_image', '/images/why.jpg'),
     ('contact_eyebrow', 'Start a Project'),
     ('contact_heading', 'Have a Story to Tell?'),
     ('contact_subheading', 'Let''s Bring It to Life.'),
@@ -234,10 +242,10 @@ Events'),
     ('contact_address', 'No. 15, Rajamannar Salai, KK Nagar, Chennai 600 078'),
     ('contact_map_embed', 'https://www.google.com/maps?q=No.+15+Rajamannar+Salai+KK+Nagar+Chennai+600078&output=embed'),
     ('contact_directions_url', 'https://www.google.com/maps/dir/?api=1&destination=No.+15+Rajamannar+Salai+KK+Nagar+Chennai+600078'),
-    ('contact_bg_image', ''),
+    ('contact_bg_image', '/images/contact-bg.jpg'),
     ('contact_notify_email', 'ogcreationsofficial@gmail.com'),
     ('contact_success_message', 'Thank you! Your enquiry has been received. Our team will get back to you shortly.'),
-    ('favicon', ''),
+    ('favicon', '/images/favicon-1793356986-ea515d.png'),
     ('footer_tagline', 'Concept to Creation'),
     ('footer_description', 'Film and creative production, from concept to creation.'),
     ('footer_copyright', 'All rights reserved.'),

@@ -1,0 +1,30 @@
+# Render Blueprint: one free web service (Docker) that serves the site and the API.
+# The database is TiDB Cloud (free Serverless); its connection details are secrets that you
+# type into Render's dashboard - they are NOT stored in this file.
+services:
+  - type: web
+    name: og-creations
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "4000"
+      - key: DB_NAME
+        value: og_creations
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      - key: DB_SSL
+        value: "1"
+      - key: DB_SSL_CA
+        value: /etc/ssl/certs/ca-certificates.crt
+      - key: APP_DEBUG
+        value: "0"
+      - key: FRONTEND_URL
+        sync: false

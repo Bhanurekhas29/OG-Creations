@@ -1,6 +1,8 @@
 <?php
 // Usage: php backend/database/install.php [username] [email] [password]
-// Creates the database, tables and the first admin user.
+// Creates the database (if allowed), the tables, the starting content and the first admin user.
+// Safe to run again: existing data is kept. Connection settings come from backend/config/config.php
+// (DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS, DB_SSL, DB_SSL_CA can be set as environment variables).
 declare(strict_types=1);
 
 if (PHP_SAPI !== 'cli') {
@@ -8,15 +10,37 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $config = require __DIR__ . '/../config/config.php';
+require __DIR__ . '/../core/database.php';
 $c = $config['db'];
 
-$pdo = new PDO("mysql:host={$c['host']};port={$c['port']};charset={$c['charset']}", $c['user'], $c['pass'], [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-]);
-$pdo->exec("CREATE DATABASE IF NOT EXISTS `{$c['name']}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+$options = pdo_options($c, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+$pdo = new PDO("mysql:host={$c['host']};port={$c['port']};charset={$c['charset']}", $c['user'], $c['pass'], $options);
+
+try {
+    $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$c['name']}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+} catch (PDOException $e) {
+    echo "Note: could not create the database ({$e->getMessage()}). Continuing - it must already exist.\n";
+}
 $pdo->exec("USE `{$c['name']}`");
-$pdo->exec(file_get_contents(__DIR__ . '/schema.sql'));
-echo "Schema installed.\n";
+
+// Run the schema one statement at a time (works on MySQL, MariaDB and TiDB).
+$sql = file_get_contents(__DIR__ . '/schema.sql');
+$count = 0;
+foreach (preg_split('/;[ \t]*\r?\n/', $sql) as $statement) {
+    $statement = trim($statement);
+    $withoutComments = trim(preg_replace('/^--.*$/m', '', $statement));
+    if ($withoutComments === '') {
+        continue;
+    }
+    try {
+        $pdo->exec($statement);
+        $count++;
+    } catch (PDOException $e) {
+        fwrite(STDERR, "Failed statement:\n" . substr($statement, 0, 300) . "\n" . $e->getMessage() . "\n");
+        exit(1);
+    }
+}
+echo "Schema installed ($count statements).\n";
 
 $username = $argv[1] ?? 'admin';
 $email    = $argv[2] ?? 'admin@ogcreations.com';

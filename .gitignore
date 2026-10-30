@@ -2,8 +2,8 @@
 node_modules/
 dist/
 
-# Local secrets and environment-specific settings (copy config.example.php to config.php)
-backend/config/config.php
+# Local secrets and environment-specific settings (copy config.local.example.php to config.local.php)
+backend/config/config.local.php
 .env
 .env.*
 

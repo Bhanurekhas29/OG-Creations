@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 $GLOBALS['config'] = require __DIR__ . '/../config/config.php';
+require __DIR__ . '/database.php';
 
 function config(string $key, $default = null)
 {
@@ -21,11 +22,11 @@ function db(): PDO
     if ($pdo === null) {
         $c = config('db');
         $dsn = "mysql:host={$c['host']};port={$c['port']};dbname={$c['name']};charset={$c['charset']}";
-        $pdo = new PDO($dsn, $c['user'], $c['pass'], [
+        $pdo = new PDO($dsn, $c['user'], $c['pass'], pdo_options($c, [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
-        ]);
+        ]));
     }
     return $pdo;
 }
@@ -179,8 +180,8 @@ const PUBLIC_SETTING_KEYS = [
 // ---- Uploads ---------------------------------------------------------------
 
 /**
- * Saves an uploaded image from $_FILES[$field] into frontend/public/images.
- * Returns the public path (e.g. /images/header-logo-123.png) or null if no file was sent.
+ * Saves an uploaded image from $_FILES[$field] into the database (media table).
+ * Returns the public path (e.g. /media/header-logo-123.png) or null if no file was sent.
  */
 function save_image_upload(string $field, string $prefix, array $extraTypes = []): ?string
 {
@@ -199,15 +200,14 @@ function save_image_upload(string $field, string $prefix, array $extraTypes = []
     if ($mime === 'image/svg+xml' && preg_match('/<script|on\w+\s*=/i', file_get_contents($f['tmp_name']))) {
         fail('SVG contains disallowed content.', 422, [$field => 'Unsafe SVG']);
     }
-    $dir = config('app.images_dir');
-    if (!is_dir($dir)) {
-        mkdir($dir, 0775, true);
-    }
+    // Uploads live in the database (media table), not on disk: hosts like Render wipe the disk on restart.
     $name = $prefix . '-' . time() . '-' . bin2hex(random_bytes(3)) . '.' . $allowed[$mime];
-    if (!move_uploaded_file($f['tmp_name'], "$dir/$name")) {
-        fail('Could not save the image.', 500);
-    }
-    return "/images/$name";
+    $stmt = db()->prepare('INSERT INTO media (name, mime, data) VALUES (?, ?, ?)');
+    $stmt->bindValue(1, $name);
+    $stmt->bindValue(2, $mime);
+    $stmt->bindValue(3, file_get_contents($f['tmp_name']), PDO::PARAM_LOB);
+    $stmt->execute();
+    return "/media/$name";
 }
 
 // ---- Mail ------------------------------------------------------------------

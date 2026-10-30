@@ -1,0 +1,8 @@
+.git
+.gitignore
+**/node_modules
+frontend/dist
+backend/config/config.local.php
+backend/storage/*.log
+*.log
+README.md
