@@ -263,6 +263,7 @@ function delete_uploaded_video(?string $url): void
 // ---- Mail ------------------------------------------------------------------
 // send_mail() lives in core/mail.php (SMTP / Brevo / PHP mail, chosen in the admin).
 require __DIR__ . '/mail.php';
+require __DIR__ . '/content.php';
 
 set_exception_handler(function (Throwable $e) {
     error_log($e->getMessage());

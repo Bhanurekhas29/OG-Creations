@@ -477,3 +477,35 @@ html { scroll-behavior: smooth; scroll-padding-top: 90px; }
   .reveal-on .step[data-reveal].in .step-icon { animation-delay: 300ms; }
   .reveal-on .step[data-reveal].in:not(:last-child)::after { animation-delay: 0ms; }
 }
+
+/* ---------- section intro texts (SEO content) ---------- */
+.sec-intro { max-width: 46rem; margin: 1.3rem auto 0; font: 500 .98rem/1.75 var(--font-text); color: #4a3f41; }
+.sec-intro-left { margin-left: 0; margin-right: 0; max-width: 38rem; }
+.sec-intro-light { color: rgba(255, 255, 255, .8); }
+.why-sub { margin: -1rem 0 1.6rem; font: 500 .9rem/1.65 var(--font-text); color: #4a3f41; }
+.bts-intro { margin: .9rem 0 0; max-width: 46rem; font: 500 .95rem/1.7 var(--font-text); color: #4a3f41; }
+.contact-intro { margin: 1rem 0 0; font: 500 .95rem/1.7 var(--font-text); color: #3a2f31; }
+.map-title { position: absolute; left: 10px; top: 10px; max-width: calc(100% - 70px); padding: .35rem .7rem; border-radius: 6px; background: rgba(255, 255, 255, .92); box-shadow: 0 2px 8px rgba(0, 0, 0, .18); font: 700 .66rem var(--font-text); letter-spacing: .04em; color: var(--brand); }
+
+/* ---------- FAQ ---------- */
+.faq { background: var(--bg); }
+.faq-inner { max-width: 860px; margin: 0 auto; padding: 3.5rem 1.5rem 4rem; }
+.faq-head { text-align: center; margin-bottom: 2.2rem; }
+.faq-eyebrow { margin: 0 0 1rem; font: 700 .7rem var(--font-text); letter-spacing: .3em; text-transform: uppercase; color: var(--brand); }
+.faq-head h2 { font: 500 clamp(2rem, 4vw, 3rem)/1.15 var(--font-heading); color: #111; }
+.faq-rule { display: block; width: 60px; height: 1px; margin: 1.3rem auto 0; background: var(--accent); }
+.faq-list { display: grid; gap: .8rem; }
+.faq-item { background: #fff; border: 1px solid #efe1d8; border-radius: 14px; transition: box-shadow .25s, border-color .25s; }
+.faq-item[open] { border-color: rgba(141, 34, 54, .35); box-shadow: 0 10px 28px rgba(43, 29, 32, .08); }
+.faq-item summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.3rem; cursor: pointer; list-style: none; font: 600 1rem/1.4 var(--font-text); color: #2b1d20; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary svg { flex-shrink: 0; color: var(--brand); transition: transform .25s; }
+.faq-item[open] summary svg { transform: rotate(180deg); }
+.faq-item p { margin: 0; padding: 0 1.3rem 1.3rem; font: 500 .92rem/1.75 var(--font-text); color: #4a3f41; }
+@media (hover: hover) { .faq-item summary:hover { color: var(--brand); } }
+@media (max-width: 520px) { .faq-inner { padding: 2.5rem 1rem 2.8rem; } .faq-item summary { padding: 1rem; font-size: .95rem; } .faq-item p { padding: 0 1rem 1.1rem; } }
+
+/* project card description */
+.work-info em { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: .45rem; font: 400 .78rem/1.5 var(--font-text); font-style: normal; color: rgba(255, 255, 255, .85); }
+.work-big .work-info em { -webkit-line-clamp: 3; font-size: .9rem; max-width: 34rem; }
+.work::after { background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, .82) 100%); }

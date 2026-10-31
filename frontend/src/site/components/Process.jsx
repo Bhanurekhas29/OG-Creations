@@ -21,6 +21,7 @@ export default function Process() {
           {d.eyebrow && <p className="process-eyebrow">{d.eyebrow}</p>}
           <h2>{d.heading}</h2>
           <span className="process-rule" />
+          {d.intro && <p className="sec-intro sec-intro-light">{d.intro}</p>}
         </header>
 
         <ol className="process-steps" style={{ '--n': Math.min(d.items.length, 5) }}>

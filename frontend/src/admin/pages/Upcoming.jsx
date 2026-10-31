@@ -10,14 +10,14 @@ const EMPTY = {
 };
 
 function HeaderForm() {
-  const [form, setForm] = useState({ upcoming_heading: '', upcoming_subtitle: '' });
+  const [form, setForm] = useState({ upcoming_heading: '', upcoming_subtitle: '', upcoming_image_alt: '' });
   const [fieldErrors, setFieldErrors] = useState({});
   const [, setMsg] = useNotice('success');
   const [, setError] = useNotice('error');
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    api('admin/upcoming-header').then((r) => setForm(r.data));
+    api('admin/upcoming-header').then((r) => setForm((f) => ({ ...f, ...r.data })));
   }, []);
 
   const submit = async (e) => {
@@ -49,6 +49,11 @@ function HeaderForm() {
           <span>Line under the heading (use · between phrases)</span>
           <input value={form.upcoming_subtitle} onChange={(e) => setForm({ ...form, upcoming_subtitle: e.target.value })} />
           {fieldErrors.upcoming_subtitle && <em className="field-error">{fieldErrors.upcoming_subtitle}</em>}
+        </label>
+        <label className="field">
+          <span>Poster image description for search engines (alt text)</span>
+          <input value={form.upcoming_image_alt} onChange={(e) => setForm({ ...form, upcoming_image_alt: e.target.value })} />
+          {fieldErrors.upcoming_image_alt && <em className="field-error">{fieldErrors.upcoming_image_alt}</em>}
         </label>
       </div>
       <button className="btn btn-primary" disabled={busy}>{busy ? 'Saving…' : 'Save heading'}</button>

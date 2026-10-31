@@ -7,7 +7,7 @@ import { useNotice, useConfirm } from '../components/Toast.jsx';
 const EMPTY = { id: null, title: '', description: '', is_active: true };
 
 function HeaderForm() {
-  const [form, setForm] = useState({ why_eyebrow: '', why_heading: '', why_image: '' });
+  const [form, setForm] = useState({ why_eyebrow: '', why_heading: '', why_image: '', why_subtext: '' });
   const [file, setFile] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
   const [, setMsg] = useNotice('success');
@@ -15,7 +15,7 @@ function HeaderForm() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    api('admin/why-header').then((r) => setForm(r.data));
+    api('admin/why-header').then((r) => setForm((f) => ({ ...f, ...r.data })));
   }, []);
 
   const submit = async (e) => {
@@ -27,10 +27,11 @@ function HeaderForm() {
     const body = new FormData();
     body.append('why_eyebrow', form.why_eyebrow);
     body.append('why_heading', form.why_heading);
+    body.append('why_subtext', form.why_subtext || '');
     if (file) body.append('why_image', file);
     try {
       const r = await api('admin/why-header', { method: 'POST', body });
-      setForm(r.data);
+      setForm((f) => ({ ...f, ...r.data }));
       setFile(null);
       setMsg('Heading and photo saved.');
     } catch (ex) {
@@ -55,6 +56,11 @@ function HeaderForm() {
           {fieldErrors.why_heading && <em className="field-error">{fieldErrors.why_heading}</em>}
         </label>
       </div>
+        <label className="field">
+          <span>Sub-text (under the heading)</span>
+          <textarea rows={3} value={form.why_subtext} onChange={(e) => setForm({ ...form, why_subtext: e.target.value })} />
+          {fieldErrors.why_subtext && <em className="field-error">{fieldErrors.why_subtext}</em>}
+        </label>
       <ImageField label="Large photo (left side)" current={form.why_image} file={file} onChange={setFile} />
       <p className="hint">Use a tall portrait photo (about 3:4, e.g. 1200×1600). It fills the full height of the left half.</p>
       <button className="btn btn-primary" disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>

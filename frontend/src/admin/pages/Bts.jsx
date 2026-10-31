@@ -12,8 +12,8 @@ const SLOTS = [
   [5, 'Bottom-right photo'],
 ];
 
-const EMPTY = { bts_heading_bold: '', bts_heading_light: '', bts_3_subtitle: '' };
-SLOTS.forEach(([n]) => { EMPTY[`bts_${n}_image`] = ''; EMPTY[`bts_${n}_caption`] = ''; });
+const EMPTY = { bts_heading_bold: '', bts_heading_light: '', bts_3_subtitle: '', bts_intro: '' };
+SLOTS.forEach(([n]) => { EMPTY[`bts_${n}_image`] = ''; EMPTY[`bts_${n}_caption`] = ''; EMPTY[`bts_${n}_alt`] = ''; });
 
 export default function Bts() {
   const [form, setForm] = useState(EMPTY);
@@ -68,6 +68,12 @@ export default function Bts() {
         </label>
       </div>
 
+      <label className="field">
+        <span>Intro text (under the heading)</span>
+        <textarea rows={3} value={form.bts_intro} onChange={set('bts_intro')} />
+        {err('bts_intro')}
+      </label>
+
       {SLOTS.map(([n, label]) => (
         <fieldset key={n} className="slot">
           <legend>{label}</legend>
@@ -81,6 +87,11 @@ export default function Bts() {
             <span>{n === 3 ? 'Title shown over the photo' : 'Caption under the photo'}</span>
             <input value={form[`bts_${n}_caption`]} onChange={set(`bts_${n}_caption`)} />
             {err(`bts_${n}_caption`)}
+          </label>
+          <label className="field">
+            <span>Image description for search engines (alt text)</span>
+            <input value={form[`bts_${n}_alt`]} onChange={set(`bts_${n}_alt`)} />
+            {err(`bts_${n}_alt`)}
           </label>
           {n === 3 && (
             <label className="field">

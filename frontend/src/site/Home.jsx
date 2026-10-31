@@ -10,6 +10,7 @@ import BehindTheScenes from './components/BehindTheScenes.jsx';
 import Process from './components/Process.jsx';
 import Upcoming from './components/Upcoming.jsx';
 import Why from './components/Why.jsx';
+import Faq from './components/Faq.jsx';
 import Contact from './components/Contact.jsx';
 import Footer from './components/Footer.jsx';
 import FloatingButtons from './components/FloatingButtons.jsx';
@@ -33,6 +34,7 @@ export default function Home() {
       <Process />
       <Upcoming />
       <Why />
+      <Faq />
       <Contact />
 
       <Footer />

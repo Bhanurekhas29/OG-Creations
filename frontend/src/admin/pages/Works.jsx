@@ -4,17 +4,17 @@ import { api } from '../api.js';
 import ImageField from '../components/ImageField.jsx';
 import { useNotice, useConfirm } from '../components/Toast.jsx';
 
-const EMPTY = { id: null, title: '', category: '', video_url: '', thumbnail: '', is_active: true };
+const EMPTY = { id: null, title: '', category: '', description: '', video_url: '', thumbnail: '', is_active: true };
 
 function HeaderForm({ onSaved }) {
-  const [form, setForm] = useState({ works_eyebrow: '', works_heading: '', works_categories: '' });
+  const [form, setForm] = useState({ works_eyebrow: '', works_heading: '', works_categories: '', works_intro: '' });
   const [fieldErrors, setFieldErrors] = useState({});
   const [, setMsg] = useNotice('success');
   const [, setError] = useNotice('error');
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    api('admin/works-header').then((r) => setForm(r.data));
+    api('admin/works-header').then((r) => setForm((f) => ({ ...f, ...r.data })));
   }, []);
 
   const submit = async (e) => {
@@ -25,7 +25,7 @@ function HeaderForm({ onSaved }) {
     setBusy(true);
     try {
       const r = await api('admin/works-header', { method: 'POST', body: form });
-      setForm(r.data);
+      setForm((f) => ({ ...f, ...r.data }));
       setMsg('Heading and categories saved.');
       onSaved(r.data.works_categories.split('\n').filter(Boolean));
     } catch (ex) {
@@ -52,6 +52,11 @@ function HeaderForm({ onSaved }) {
           {err('works_heading')}
         </label>
       </div>
+      <label className="field">
+          <span>Intro text (under the heading)</span>
+          <textarea rows={3} value={form.works_intro} onChange={(e) => setForm({ ...form, works_intro: e.target.value })} />
+          {fieldErrors.works_intro && <em className="field-error">{fieldErrors.works_intro}</em>}
+        </label>
       <label className="field">
         <span>Filter categories — one per line (shown as tabs after “All”)</span>
         <textarea rows={5} value={form.works_categories} onChange={(e) => setForm({ ...form, works_categories: e.target.value })} />
@@ -99,6 +104,7 @@ export default function Works() {
     const body = new FormData();
     body.append('title', form.title);
     body.append('category', form.category);
+    body.append('description', form.description || '');
     body.append('video_url', form.video_url);
     body.append('is_active', form.is_active ? '1' : '0');
     if (file) body.append('thumbnail', file);
@@ -170,6 +176,11 @@ export default function Works() {
               {err('category')}
             </label>
           </div>
+          <label className="field">
+            <span>Short description (shown on the project card)</span>
+            <textarea rows={2} maxLength={255} value={form.description || ''} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            {err('description')}
+          </label>
           <label className="field">
             <span>Video link (YouTube, Vimeo or a direct .mp4 link)</span>
             <input value={form.video_url} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="https://www.youtube.com/watch?v=…" />

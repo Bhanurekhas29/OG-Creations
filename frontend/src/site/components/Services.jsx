@@ -23,6 +23,7 @@ export default function Services() {
           {d.eyebrow && <p className="services-eyebrow">{d.eyebrow}</p>}
           <h2>{d.heading}</h2>
           <span className="services-rule" />
+          {d.intro && <p className="sec-intro">{d.intro}</p>}
         </header>
 
         <div className="services-grid">

@@ -16,12 +16,13 @@ export default function Why() {
   return (
     <section id="why-choose-us" className="why">
       <div className="why-inner">
-        <div className="why-photo">{d.image && <img src={d.image} alt="" loading="lazy" />}</div>
+        <div className="why-photo">{d.image && <img src={d.image} alt={d.heading} loading="lazy" />}</div>
 
         <div className="why-text">
           {d.eyebrow && <p className="why-eyebrow">{d.eyebrow}</p>}
           <h2>{d.heading}</h2>
           <span className="why-rule" />
+          {d.subtext && <p className="why-sub">{d.subtext}</p>}
 
           <ol className="why-list">
             {d.items.map((it, i) => (

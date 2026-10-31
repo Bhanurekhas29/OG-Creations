@@ -20,6 +20,7 @@ import Bts from './pages/Bts.jsx';
 import Process from './pages/Process.jsx';
 import Upcoming from './pages/Upcoming.jsx';
 import Why from './pages/Why.jsx';
+import Faq from './pages/Faq.jsx';
 import Contact from './pages/Contact.jsx';
 import Enquiries from './pages/Enquiries.jsx';
 import Favicon from './pages/Favicon.jsx';
@@ -65,6 +66,7 @@ export default function AdminApp() {
           <Route path="process" element={<Process />} />
           <Route path="upcoming" element={<Upcoming />} />
           <Route path="why" element={<Why />} />
+          <Route path="faq" element={<Faq />} />
           <Route path="contact" element={<Contact />} />
           <Route path="enquiries" element={<Enquiries />} />
           <Route path="favicon" element={<Favicon />} />

@@ -85,7 +85,7 @@ export default function Upcoming() {
                       </p>
                     )}
                   </div>
-                  <div className="upc-photo">{it.image && <img src={it.image} alt={it.title} loading="lazy" />}</div>
+                  <div className="upc-photo">{it.image && <img src={it.image} alt={d.image_alt ? `${it.title} - ${d.image_alt}` : it.title} loading="lazy" />}</div>
                 </div>
               </article>
             ))}

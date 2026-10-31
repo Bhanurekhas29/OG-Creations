@@ -19,7 +19,7 @@ export default function BehindTheScenes() {
     return (
       <figure className={`bts-fig ${cls}`}>
         <div className="bts-img">
-          {p.image && <img src={p.image} alt={p.caption} loading="lazy" />}
+          {p.image && <img src={p.image} alt={p.alt || p.caption} loading="lazy" />}
           {i === 2 && p.caption && (
             <figcaption className="bts-overlay">
               <strong>{p.caption}</strong>
@@ -41,6 +41,7 @@ export default function BehindTheScenes() {
             {d.heading_bold && <b>{d.heading_bold}</b>}
             {d.heading_light && <> <span>{d.heading_light}</span></>}
           </h2>
+          {d.intro && <p className="bts-intro">{d.intro}</p>}
         </header>
 
         <div className="bts-grid">

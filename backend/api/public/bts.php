@@ -1,10 +1,11 @@
 <?php
 require_method('GET');
 
-$keys = ['bts_heading_bold', 'bts_heading_light', 'bts_3_subtitle'];
+$keys = ['bts_heading_bold', 'bts_heading_light', 'bts_3_subtitle', 'bts_intro'];
 foreach ([1, 2, 3, 4, 5] as $n) {
     $keys[] = "bts_{$n}_image";
     $keys[] = "bts_{$n}_caption";
+    $keys[] = "bts_{$n}_alt";
 }
 $s = get_settings($keys);
 
@@ -13,6 +14,7 @@ foreach ([1, 2, 3, 4, 5] as $n) {
     $photos[] = [
         'image'    => $s["bts_{$n}_image"] ?? '',
         'caption'  => $s["bts_{$n}_caption"] ?? '',
+        'alt'      => $s["bts_{$n}_alt"] ?? '',
         'subtitle' => $n === 3 ? ($s['bts_3_subtitle'] ?? '') : '',
     ];
 }
@@ -22,6 +24,7 @@ json_response([
     'data'    => [
         'heading_bold'  => $s['bts_heading_bold'] ?? '',
         'heading_light' => $s['bts_heading_light'] ?? '',
+        'intro'         => $s['bts_intro'] ?? '',
         'photos'        => $photos,
     ],
 ]);

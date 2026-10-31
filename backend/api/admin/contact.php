@@ -5,7 +5,7 @@ require_auth();
 const CONTACT_KEYS = [
     'contact_eyebrow', 'contact_heading', 'contact_subheading', 'contact_phone', 'contact_email',
     'contact_address', 'contact_map_embed', 'contact_directions_url', 'contact_bg_image',
-    'contact_notify_email', 'contact_success_message',
+    'contact_notify_email', 'contact_success_message', 'contact_intro', 'contact_map_title',
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -24,7 +24,7 @@ foreach (array_diff(CONTACT_KEYS, ['contact_bg_image']) as $k) {
 
 $errors = [];
 if ($v['contact_heading'] === '' || mb_strlen($v['contact_heading']) > 120) $errors['contact_heading'] = 'Enter a heading (max 120 characters).';
-foreach (['contact_eyebrow' => 80, 'contact_subheading' => 120, 'contact_address' => 200, 'contact_success_message' => 300] as $k => $max) {
+foreach (['contact_eyebrow' => 80, 'contact_subheading' => 120, 'contact_address' => 200, 'contact_success_message' => 300, 'contact_intro' => 400, 'contact_map_title' => 120] as $k => $max) {
     if (mb_strlen($v[$k]) > $max) $errors[$k] = "Max $max characters.";
 }
 if ($v['contact_phone'] !== '' && !preg_match('/^\+?[0-9 \-]{6,20}$/', $v['contact_phone'])) {

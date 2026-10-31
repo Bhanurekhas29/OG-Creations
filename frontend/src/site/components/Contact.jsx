@@ -98,6 +98,7 @@ export default function Contact() {
           {d.eyebrow && <p className="contact-eyebrow">{d.eyebrow}</p>}
           <h2>{d.heading}</h2>
           {d.subheading && <p className="contact-sub">{d.subheading}</p>}
+          {d.intro && <p className="contact-intro">{d.intro}</p>}
 
           <ul className="contact-list">
             {d.phone && (
@@ -122,7 +123,8 @@ export default function Contact() {
 
           {d.map_embed && (
             <div className="contact-map">
-              <iframe src={d.map_embed} title="Studio location map" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              <iframe src={d.map_embed} title={d.map_title || 'Studio location map'} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              {d.map_title && <span className="map-title">{d.map_title}</span>}
               {d.directions_url && (
                 <a href={d.directions_url} target="_blank" rel="noopener noreferrer" className="map-go" aria-label="Get directions">
                   <Navigation size={18} />

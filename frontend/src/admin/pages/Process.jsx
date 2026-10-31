@@ -7,14 +7,14 @@ import { useNotice, useConfirm } from '../components/Toast.jsx';
 const EMPTY = { id: null, title: '', description: '', icon: 'Star', is_active: true };
 
 function HeaderForm() {
-  const [form, setForm] = useState({ process_eyebrow: '', process_heading: '' });
+  const [form, setForm] = useState({ process_eyebrow: '', process_heading: '', process_intro: '' });
   const [fieldErrors, setFieldErrors] = useState({});
   const [, setMsg] = useNotice('success');
   const [, setError] = useNotice('error');
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    api('admin/process-header').then((r) => setForm(r.data));
+    api('admin/process-header').then((r) => setForm((f) => ({ ...f, ...r.data })));
   }, []);
 
   const submit = async (e) => {
@@ -156,7 +156,12 @@ export default function Process() {
             <span>Visible on the website</span>
           </label>
           <div className="btn-row">
-            <button className="btn btn-primary" disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
+            <label className="field">
+          <span>Intro text (under the heading)</span>
+          <textarea rows={3} value={form.process_intro} onChange={(e) => setForm({ ...form, process_intro: e.target.value })} />
+          {fieldErrors.process_intro && <em className="field-error">{fieldErrors.process_intro}</em>}
+        </label>
+        <button className="btn btn-primary" disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
             <button type="button" className="btn btn-outline" onClick={() => setForm(null)}>Cancel</button>
           </div>
         </form>

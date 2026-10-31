@@ -7,6 +7,7 @@ if ($method === 'GET') {
     $s = get_settings([
         'contact_eyebrow', 'contact_heading', 'contact_subheading', 'contact_phone', 'contact_email',
         'contact_address', 'contact_map_embed', 'contact_directions_url', 'contact_bg_image',
+        'contact_intro', 'contact_map_title',
     ]);
     $services = db()->query('SELECT title FROM services WHERE is_active = 1 ORDER BY sort_order, id')->fetchAll(PDO::FETCH_COLUMN);
     json_response([
@@ -15,6 +16,8 @@ if ($method === 'GET') {
             'eyebrow'        => $s['contact_eyebrow'] ?? '',
             'heading'        => $s['contact_heading'] ?? '',
             'subheading'     => $s['contact_subheading'] ?? '',
+            'intro'          => $s['contact_intro'] ?? '',
+            'map_title'      => $s['contact_map_title'] ?? '',
             'phone'          => $s['contact_phone'] ?? '',
             'email'          => $s['contact_email'] ?? '',
             'address'        => $s['contact_address'] ?? '',

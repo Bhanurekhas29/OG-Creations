@@ -1,7 +1,7 @@
 <?php
 require_method('GET');
 
-$s = get_settings(['upcoming_heading', 'upcoming_subtitle']);
+$s = get_settings(['upcoming_heading', 'upcoming_subtitle', 'upcoming_image_alt']);
 $rows = db()->query(
     'SELECT title, tagline, lead_actor, lead_actress, supporting_cast, release_date, status_label, image
        FROM upcoming_projects WHERE is_active = 1 ORDER BY sort_order, id'
@@ -23,6 +23,7 @@ json_response([
     'data'    => [
         'heading'  => $s['upcoming_heading'] ?? '',
         'subtitle' => $s['upcoming_subtitle'] ?? '',
+        'image_alt' => $s['upcoming_image_alt'] ?? '',
         'items'    => $items,
     ],
 ]);

@@ -2,11 +2,12 @@
 // List / create / update / delete featured projects (video + thumbnail).
 // Create and update both use POST (multipart) because PHP does not parse files on PUT.
 require_auth();
+ensure_works_description();
 $method = $_SERVER['REQUEST_METHOD'];
 
 function work_row(int $id): ?array
 {
-    $stmt = db()->prepare('SELECT id, title, category, video_url, thumbnail, sort_order, is_active FROM works WHERE id = ?');
+    $stmt = db()->prepare('SELECT id, title, category, description, video_url, thumbnail, sort_order, is_active FROM works WHERE id = ?');
     $stmt->execute([$id]);
     $r = $stmt->fetch();
     if (!$r) return null;
@@ -36,11 +37,13 @@ if ($id && !work_row($id)) fail('Project not found.', 404);
 $in       = input();
 $title    = trim((string) ($in['title'] ?? ''));
 $category = trim((string) ($in['category'] ?? ''));
+$desc     = trim((string) ($in['description'] ?? ''));
 $video    = trim((string) ($in['video_url'] ?? ''));
 
 $errors = [];
 if ($title === '' || mb_strlen($title) > 80) $errors['title'] = 'Enter a title (max 80 characters).';
 if (mb_strlen($category) > 60) $errors['category'] = 'Max 60 characters.';
+if (mb_strlen($desc) > 255) $errors['description'] = 'Max 255 characters.';
 if ($video !== '' && (!preg_match('~^https?://[^\s]+$~i', $video) || strlen($video) > 500)) {
     $errors['video_url'] = 'Enter a full video link starting with http:// or https://';
 }
@@ -54,13 +57,13 @@ if ($upload) $video = $upload;
 if ($id) {
     $before = work_row($id)['video_url'];
     if ($before !== $video) delete_uploaded_video($before);
-    db()->prepare('UPDATE works SET title = ?, category = ?, video_url = ?, is_active = ? WHERE id = ?')
-        ->execute([$title, $category, $video, $active, $id]);
+    db()->prepare('UPDATE works SET title = ?, category = ?, description = ?, video_url = ?, is_active = ? WHERE id = ?')
+        ->execute([$title, $category, $desc, $video, $active, $id]);
     if ($thumb) db()->prepare('UPDATE works SET thumbnail = ? WHERE id = ?')->execute([$thumb, $id]);
     json_response(['success' => true, 'data' => work_row($id)]);
 }
 
 $next = (int) db()->query('SELECT COALESCE(MAX(sort_order), 0) + 1 FROM works')->fetchColumn();
-db()->prepare('INSERT INTO works (title, category, video_url, thumbnail, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?)')
-    ->execute([$title, $category, $video, $thumb ?? '', $next, $active]);
+db()->prepare('INSERT INTO works (title, category, description, video_url, thumbnail, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    ->execute([$title, $category, $desc, $video, $thumb ?? '', $next, $active]);
 json_response(['success' => true, 'data' => work_row((int) db()->lastInsertId())], 201);

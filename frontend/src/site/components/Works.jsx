@@ -73,6 +73,7 @@ export default function Works() {
             {d.eyebrow && <p className="works-eyebrow">{d.eyebrow}</p>}
             <h2>{d.heading}</h2>
             <span className="works-rule" />
+            {d.intro && <p className="sec-intro sec-intro-left">{d.intro}</p>}
           </div>
           {d.categories.length > 0 && (
             <nav className="works-tabs" aria-label="Filter projects">
@@ -91,11 +92,12 @@ export default function Works() {
               onClick={() => open(it)}
               aria-label={it.video_url ? `Play ${it.title}` : it.title}
             >
-              {it.thumbnail && <img src={it.thumbnail} alt="" loading="lazy" />}
+              {it.thumbnail && <img src={it.thumbnail} alt={[it.title, it.category].filter(Boolean).join(' - ')} loading="lazy" />}
               <span className="work-play" aria-hidden="true"><Play size={20} fill="currentColor" /></span>
               <span className="work-info">
                 {it.category && <small>{it.category}</small>}
                 <strong>{it.title}</strong>
+                {it.description && <em>{it.description}</em>}
               </span>
             </button>
           ))}

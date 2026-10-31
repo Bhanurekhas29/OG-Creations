@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 const TARGETS = [
   '.studio-inner > *', '.services-head', '.svc-wrap', '.works-head', '.work', '.bts-head', '.bts-card',
   '.process-head', '.step', '.upc-head', '.upc-carousel', '.upc-controls', '.why-photo', '.why-text',
-  '.why-list li', '.contact-info', '.contact-card', '.foot-inner > *', '.show-more',
+  '.why-list li', '.faq-head', '.faq-item', '.contact-info', '.contact-card', '.foot-inner > *', '.show-more',
 ].join(',');
 
 /** Adds a scroll-reveal animation to landing page sections. Skipped for reduced-motion visitors. */

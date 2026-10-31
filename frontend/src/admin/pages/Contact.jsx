@@ -5,7 +5,7 @@ import { useNotice } from '../components/Toast.jsx';
 
 const EMPTY = {
   contact_eyebrow: '', contact_heading: '', contact_subheading: '', contact_phone: '', contact_email: '',
-  contact_address: '', contact_map_embed: '', contact_directions_url: '', contact_bg_image: '',
+  contact_address: '', contact_map_embed: '', contact_directions_url: '', contact_bg_image: '', contact_intro: '', contact_map_title: '',
   contact_notify_email: '', contact_success_message: '',
 };
 
@@ -69,6 +69,11 @@ export default function Contact() {
           {err('contact_subheading')}
         </label>
       </div>
+      <label className="field">
+        <span>Intro text (under the italic line)</span>
+        <textarea rows={3} value={form.contact_intro} onChange={set('contact_intro')} />
+        {err('contact_intro')}
+      </label>
 
       <div className="grid-2">
         <label className="field">
@@ -92,6 +97,11 @@ export default function Contact() {
         <span>Google Maps embed link (Google Maps → Share → Embed a map → copy the src link)</span>
         <input value={form.contact_map_embed} onChange={set('contact_map_embed')} placeholder="https://www.google.com/maps/embed?pb=…" />
         {err('contact_map_embed')}
+      </label>
+      <label className="field">
+        <span>Map title (shown on the map)</span>
+        <input value={form.contact_map_title} onChange={set('contact_map_title')} />
+        {err('contact_map_title')}
       </label>
       <label className="field">
         <span>“Get directions” link (the button on the map)</span>
