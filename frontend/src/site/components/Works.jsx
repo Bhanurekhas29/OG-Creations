@@ -37,10 +37,13 @@ function VideoModal({ video, title, onClose }) {
   );
 }
 
+const PAGE = 9;
+
 export default function Works() {
   const [d, setD] = useState(null);
   const [filter, setFilter] = useState('All');
   const [playing, setPlaying] = useState(null);
+  const [shown, setShown] = useState(PAGE);
 
   useEffect(() => {
     fetch('/api/public/works')
@@ -52,7 +55,8 @@ export default function Works() {
   if (!d) return <section id="works" className="works" />;
   if (!d.items.length) return null;
 
-  const items = filter === 'All' ? d.items : d.items.filter((i) => i.category === filter);
+  const all = filter === 'All' ? d.items : d.items.filter((i) => i.category === filter);
+  const items = all.slice(0, shown);
 
   const open = (it) => {
     const v = parseVideo(it.video_url);
@@ -73,7 +77,7 @@ export default function Works() {
           {d.categories.length > 0 && (
             <nav className="works-tabs" aria-label="Filter projects">
               {['All', ...d.categories].map((c) => (
-                <button key={c} className={c === filter ? 'active' : ''} onClick={() => setFilter(c)}>{c}</button>
+                <button key={c} className={c === filter ? 'active' : ''} onClick={() => { setFilter(c); setShown(PAGE); }}>{c}</button>
               ))}
             </nav>
           )}
@@ -97,6 +101,11 @@ export default function Works() {
           ))}
           {!items.length && <p className="works-empty">No projects in this category yet.</p>}
         </div>
+        {all.length > shown && (
+          <div className="show-more">
+            <button onClick={() => setShown(shown + PAGE)}>Show more ({all.length - shown} more)</button>
+          </div>
+        )}
       </div>
       {playing && <VideoModal video={playing.video} title={playing.title} onClose={() => setPlaying(null)} />}
     </section>

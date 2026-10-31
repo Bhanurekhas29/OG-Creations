@@ -76,16 +76,19 @@ export default function Footer() {
         )}
       </div>
 
+      {/* The line spans the full width; its text stays aligned with the columns above. */}
       <div className="foot-bar">
-        <p>
-          © {new Date().getFullYear()} {d.site_name}. {d.copyright}
-        </p>
-        {d.credits.show && d.credits.url && (
+        <div className="foot-bar-inner">
           <p>
-            Designed &amp; developed by{' '}
-            <a href={d.credits.url} target="_blank" rel="noopener noreferrer">Vetri IT Systems</a>
+            © {new Date().getFullYear()} {d.site_name}. {d.copyright}
           </p>
-        )}
+          {d.credits.show && d.credits.url && (
+            <p>
+              Designed &amp; developed by{' '}
+              <a href={d.credits.url} target="_blank" rel="noopener noreferrer">Vetri IT Systems</a>
+            </p>
+          )}
+        </div>
       </div>
     </footer>
   );

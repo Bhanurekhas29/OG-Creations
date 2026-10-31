@@ -20,7 +20,10 @@ export default function Navbar({ settings }) {
       <div className="nav-inner">
         <a href="#home" className="nav-brand">
           <img src={settings.header_logo} alt={settings.site_name} />
-          <span>{settings.site_name}</span>
+          <span className="nav-name">
+            <b>{settings.site_name}</b>
+            {nav.tagline && <small>{nav.tagline}</small>}
+          </span>
         </a>
 
         <nav className={`nav-links ${open ? 'open' : ''}`} onClick={() => setOpen(false)}>

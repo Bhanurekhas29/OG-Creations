@@ -68,9 +68,9 @@
 .adm-content { padding: 2rem; max-width: 1200px; }
 
 /* ---------- dashboard ---------- */
-.hero-banner { background: var(--brand); color: #fff; border-radius: 14px; padding: 1rem 1.5rem; border-bottom: 4px solid var(--accent); }
-.hero-banner h1 { font-size: 1.6rem; line-height: 1.2; }
-.hero-banner p { margin: .2rem 0 0; opacity: .9; font-size: .9rem; }
+.hero-banner { background: var(--brand); color: #fff; border-radius: 10px; padding: .5rem 1.1rem; border-bottom: 3px solid var(--accent); }
+.hero-banner h1 { font-size: 1.15rem; line-height: 1.25; }
+.hero-banner p { margin: .05rem 0 0; opacity: .88; font-size: .78rem; line-height: 1.35; }
 .quick-group { margin-top: 2rem; }
 .quick-group h3 { font: 700 1.4rem var(--font-heading); margin-bottom: .8rem; }
 .quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; }

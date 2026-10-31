@@ -211,22 +211,8 @@ function save_image_upload(string $field, string $prefix, array $extraTypes = []
 }
 
 // ---- Mail ------------------------------------------------------------------
-
-/**
- * Sends via PHP mail(). In debug mode every message is also appended to
- * backend/storage/mail.log so reset links can be read without an SMTP server.
- */
-function send_mail(string $to, string $subject, string $body): bool
-{
-    if (config('app.debug')) {
-        $entry = sprintf("[%s] To: %s\nSubject: %s\n%s\n%s\n", date('c'), $to, $subject, $body, str_repeat('-', 60));
-        file_put_contents(__DIR__ . '/../storage/mail.log', $entry, FILE_APPEND);
-    }
-    $from = config('mail.from');
-    $name = config('mail.from_name');
-    $headers = "From: $name <$from>\r\nContent-Type: text/plain; charset=utf-8";
-    return @mail($to, $subject, $body, $headers);
-}
+// send_mail() lives in core/mail.php (SMTP / Brevo / PHP mail, chosen in the admin).
+require __DIR__ . '/mail.php';
 
 set_exception_handler(function (Throwable $e) {
     error_log($e->getMessage());

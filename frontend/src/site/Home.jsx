@@ -1,4 +1,5 @@
 import useSiteSettings from './useSiteSettings.js';
+import useReveal from './useReveal.js';
 import Navbar from './components/Navbar.jsx';
 import Hero from './components/Hero.jsx';
 import Marquee from './components/Marquee.jsx';
@@ -16,6 +17,7 @@ import FloatingButtons from './components/FloatingButtons.jsx';
 // Public landing page - sections are added one by one as designs arrive.
 export default function Home() {
   const s = useSiteSettings();
+  useReveal();
   if (!s) return null;
 
   return (

@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 
+const PAGE = 9;
+
 export default function Services() {
   const [d, setD] = useState(null);
+  const [shown, setShown] = useState(PAGE);
 
   useEffect(() => {
     fetch('/api/public/services')
@@ -23,7 +26,7 @@ export default function Services() {
         </header>
 
         <div className="services-grid">
-          {d.items.map((it, i) => (
+          {d.items.slice(0, shown).map((it, i) => (
             <article key={it.title + i} className="svc-wrap">
               <div className="svc-card">
                 {it.image && <img src={it.image} alt={it.title} loading="lazy" />}
@@ -37,6 +40,11 @@ export default function Services() {
             </article>
           ))}
         </div>
+        {d.items.length > shown && (
+          <div className="show-more">
+            <button onClick={() => setShown(shown + PAGE)}>Show more ({d.items.length - shown} more)</button>
+          </div>
+        )}
       </div>
     </section>
   );

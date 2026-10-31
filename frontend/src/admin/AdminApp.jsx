@@ -26,6 +26,7 @@ import Footer from './pages/Footer.jsx';
 import Floating from './pages/Floating.jsx';
 import Seo from './pages/Seo.jsx';
 import Credits from './pages/Credits.jsx';
+import EmailSettings from './pages/EmailSettings.jsx';
 
 function Protected() {
   const { user, loading } = useAuth();
@@ -68,6 +69,7 @@ export default function AdminApp() {
           <Route path="floating" element={<Floating />} />
           <Route path="seo" element={<Seo />} />
           <Route path="credits" element={<Credits />} />
+          <Route path="email-settings" element={<EmailSettings />} />
         </Route>
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>

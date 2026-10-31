@@ -30,7 +30,7 @@ No passwords are written in this file. Keep your passwords somewhere safe.
 Use the upload box on the section's page. Photos are kept in the database and stay after restarts. Use JPG, PNG, WEBP or SVG, 2 MB or smaller. Smaller photos make the website faster.
 
 ### Read messages from the contact form
-Open **Enquiries** in the admin. New messages are bold. Email notifications are **not** sent on the free plan (see section 8), so check this page regularly.
+Open **Enquiries** in the admin. New messages are bold. Email notifications need **Email Settings** to be set up first (see section 8), so check this page regularly.
 
 ### Change the admin password
 1. Admin panel, then **Users**.
@@ -176,8 +176,8 @@ The local database is separate from the live one. Changes you make in your local
 
 ## 8. Things that do not work yet
 
-- **Emails.** The free Render plan cannot send email. The contact form still saves every message in **Enquiries**, but no email notification is sent, and "Forgot password" cannot email a reset link. If you forget the admin password, reset it with the steps in section 9.
-  A later improvement is to add an email service (an Email Settings page in the admin).
+- **Emails.** The free Render plan blocks normal email (SMTP), so out of the box no email is sent. The contact form still saves every message in **Enquiries**.
+  To turn emails on, open **Email Settings** (Authentication & Authorization menu) and choose **Brevo**: create a free account at brevo.com, verify your sender email, create an API key, paste it in Email Settings, save, then use **Send test email**. Brevo works on the free Render plan. "SMTP" (for example Gmail with an App Password) works on your own computer or a paid host. If you forget the admin password, reset it with the steps in section 9.
 - **Video files.** Videos are played from YouTube or Vimeo links. Do not upload video files.
 
 ---
