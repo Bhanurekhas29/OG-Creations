@@ -144,7 +144,7 @@ Use this to try changes before they go live.
 
 **Start** (use two terminals, in the project folder)
 ```bash
-php -S localhost:8000 -t backend backend/index.php
+php -d upload_max_filesize=32M -d post_max_size=40M -S localhost:8000 -t backend backend/index.php
 ```
 ```bash
 cd frontend
@@ -180,6 +180,8 @@ The local database is separate from the live one. Changes you make in your local
 - **Video files.** Videos are played from YouTube or Vimeo links. Do not upload video files.
 
 ---
+
+- **Video uploads.** In the admin (Our Works) each project can use a video link (YouTube, Vimeo or .mp4 link) or an uploaded MP4/WebM file up to 30 MB. Uploaded files are kept on the server's disk, and Render's free disk is wiped on every restart, so the upload box is switched off on Render (`VIDEO_UPLOADS=0` in `render.yaml`). On a normal server with a permanent disk, set `VIDEO_UPLOADS=1` and `MAX_VIDEO_MB` (default 30) and make `backend/storage/videos` writable.
 
 ## 9. Problems and fixes
 

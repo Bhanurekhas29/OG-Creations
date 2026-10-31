@@ -21,6 +21,9 @@ $config = [
         'frontend_url'      => 'http://localhost:5173',
         'token_ttl_hours'   => 12,
         'reset_ttl_minutes' => 30,
+        // Video files are saved on the server's disk, so turn this off (VIDEO_UPLOADS=0) on hosts whose disk is wiped on restart (Render free).
+        'video_uploads'     => true,
+        'max_video_mb'      => 30,
     ],
     'mail' => [
         'from'      => 'no-reply@ogcreations.com',
@@ -45,6 +48,8 @@ $overrides = [
     ['db', 'timezone', 'DB_TIMEZONE', 'string'],
     ['app', 'debug', 'APP_DEBUG', 'bool'],
     ['app', 'frontend_url', 'FRONTEND_URL', 'string'],
+    ['app', 'video_uploads', 'VIDEO_UPLOADS', 'bool'],
+    ['app', 'max_video_mb', 'MAX_VIDEO_MB', 'int'],
     ['mail', 'from', 'MAIL_FROM', 'string'],
     ['mail', 'from_name', 'MAIL_FROM_NAME', 'string'],
 ];

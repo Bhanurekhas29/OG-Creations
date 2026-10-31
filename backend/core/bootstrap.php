@@ -210,6 +210,56 @@ function save_image_upload(string $field, string $prefix, array $extraTypes = []
     return "/media/$name";
 }
 
+/** Folder for uploaded video files (kept on disk, unlike images which live in the database). */
+function video_dir(): string
+{
+    return __DIR__ . '/../storage/videos';
+}
+
+/**
+ * Saves an uploaded video from $_FILES[$field] to disk. Returns the public path (/media/<name>) or null
+ * when no file was sent. Only mp4 and webm up to the configured size are accepted.
+ */
+function save_video_upload(string $field, string $prefix): ?string
+{
+    if (empty($_FILES[$field]) || $_FILES[$field]['error'] === UPLOAD_ERR_NO_FILE) {
+        return null;
+    }
+    if (!config('app.video_uploads')) {
+        fail('Video uploads are turned off on this server. Paste a YouTube or Vimeo link instead.', 422, [$field => 'Uploads off']);
+    }
+    $maxMb = (int) config('app.max_video_mb');
+    $f = $_FILES[$field];
+    if ($f['error'] === UPLOAD_ERR_INI_SIZE || $f['error'] === UPLOAD_ERR_FORM_SIZE || $f['size'] > $maxMb * 1024 * 1024) {
+        fail("The video is too big (max $maxMb MB).", 422, [$field => "Max $maxMb MB"]);
+    }
+    if ($f['error'] !== UPLOAD_ERR_OK) {
+        fail('Video upload failed. Please try again.', 422, [$field => 'Upload failed']);
+    }
+    $mime = (new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']);
+    $allowed = ['video/mp4' => 'mp4', 'video/webm' => 'webm'];
+    if (!isset($allowed[$mime])) {
+        fail('The video must be an MP4 or WebM file.', 422, [$field => 'Invalid type']);
+    }
+    $dir = video_dir();
+    if (!is_dir($dir) && !@mkdir($dir, 0775, true)) {
+        fail('The server cannot store videos (folder is not writable).', 500);
+    }
+    $name = $prefix . '-' . time() . '-' . bin2hex(random_bytes(3)) . '.' . $allowed[$mime];
+    if (!move_uploaded_file($f['tmp_name'], "$dir/$name")) {
+        fail('The server could not save the video.', 500);
+    }
+    return "/media/$name";
+}
+
+/** Deletes a previously uploaded video file when a project's video is replaced or the project is removed. */
+function delete_uploaded_video(?string $url): void
+{
+    if ($url && preg_match('#^/media/([A-Za-z0-9._-]+\.(?:mp4|webm))$#', $url, $m)) {
+        @unlink(video_dir() . '/' . $m[1]);
+    }
+}
+
 // ---- Mail ------------------------------------------------------------------
 // send_mail() lives in core/mail.php (SMTP / Brevo / PHP mail, chosen in the admin).
 require __DIR__ . '/mail.php';

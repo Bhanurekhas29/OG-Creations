@@ -68,6 +68,8 @@ export default function Works() {
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState(null);
   const [file, setFile] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoInfo, setVideoInfo] = useState({ enabled: false, max_mb: 30 });
   const [fieldErrors, setFieldErrors] = useState({});
   const [, setMsg] = useNotice('success');
   const [, setError] = useNotice('error');
@@ -84,6 +86,7 @@ export default function Works() {
     setError('');
     setFieldErrors({});
     setFile(null);
+    setVideoFile(null);
     setForm(item ? { ...item, is_active: !!item.is_active } : { ...EMPTY, category: categories[0] || '' });
   };
 
@@ -98,6 +101,7 @@ export default function Works() {
     body.append('video_url', form.video_url);
     body.append('is_active', form.is_active ? '1' : '0');
     if (file) body.append('thumbnail', file);
+    if (videoFile) body.append('video_file', videoFile);
     try {
       const editing = !!form.id;
       await api(editing ? `admin/works?id=${form.id}` : 'admin/works', { method: 'POST', body });
@@ -170,6 +174,28 @@ export default function Works() {
             <input value={form.video_url} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="https://www.youtube.com/watch?v=…" />
             {err('video_url')}
           </label>
+          {videoInfo.enabled && (
+            <label className="field">
+              <span>Or upload a video file (MP4 or WebM, max {videoInfo.max_mb} MB)</span>
+              <input
+                type="file"
+                accept="video/mp4,video/webm"
+                onChange={(e) => {
+                  const f = e.target.files[0] || null;
+                  if (f && f.size > videoInfo.max_mb * 1024 * 1024) {
+                    setError(`That video is ${(f.size / 1048576).toFixed(1)} MB. The limit is ${videoInfo.max_mb} MB.`);
+                    e.target.value = '';
+                    setVideoFile(null);
+                    return;
+                  }
+                  setError('');
+                  setVideoFile(f);
+                }}
+              />
+              {form.video_url.startsWith('/media/') && !videoFile && <small>An uploaded video is saved for this project. Choose a new file to replace it, or paste a link above to switch to a link.</small>}
+              {err('video_file')}
+            </label>
+          )}
           <ImageField label="Thumbnail image" current={form.thumbnail} file={file} onChange={setFile} />
           <p className="hint">Use a wide landscape image (16:9, e.g. 1600×900). Visitors click the thumbnail to watch the video.</p>
           <label className="check">

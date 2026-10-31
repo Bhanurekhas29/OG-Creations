@@ -24,7 +24,8 @@ if ($method === 'GET') {
 $id = (int) ($_GET['id'] ?? 0);
 
 if ($method === 'DELETE') {
-    if (!$id || !work_row($id)) fail('Project not found.', 404);
+    if (!$id || !($old = work_row($id))) fail('Project not found.', 404);
+    delete_uploaded_video($old['video_url']);
     db()->prepare('DELETE FROM works WHERE id = ?')->execute([$id]);
     json_response(['success' => true]);
 }
@@ -47,8 +48,12 @@ if ($errors) fail('Please fix the highlighted fields.', 422, $errors);
 
 $active = filter_var($in['is_active'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
 $thumb  = save_image_upload('thumbnail', 'work');
+$upload = save_video_upload('video_file', 'work-video');   // an uploaded file replaces the link
+if ($upload) $video = $upload;
 
 if ($id) {
+    $before = work_row($id)['video_url'];
+    if ($before !== $video) delete_uploaded_video($before);
     db()->prepare('UPDATE works SET title = ?, category = ?, video_url = ?, is_active = ? WHERE id = ?')
         ->execute([$title, $category, $video, $active, $id]);
     if ($thumb) db()->prepare('UPDATE works SET thumbnail = ? WHERE id = ?')->execute([$thumb, $id]);

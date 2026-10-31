@@ -32,7 +32,7 @@ Dockerfile, render.yaml   deployment on Render
 4. **Run the API** from the project root:
 
    ```bash
-   php -S localhost:8000 -t backend backend/index.php
+   php -d upload_max_filesize=32M -d post_max_size=40M -S localhost:8000 -t backend backend/index.php
    ```
 5. **Run the website** in a second terminal:
 

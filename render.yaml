@@ -26,5 +26,8 @@ services:
         value: /etc/ssl/certs/ca-certificates.crt
       - key: APP_DEBUG
         value: "0"
+      # Render's free disk is wiped on every restart, so video files cannot be kept. Use YouTube/Vimeo links.
+      - key: VIDEO_UPLOADS
+        value: "0"
       - key: FRONTEND_URL
         sync: false

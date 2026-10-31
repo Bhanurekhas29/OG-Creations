@@ -16,3 +16,6 @@ backend/storage/*.log
 Thumbs.db
 .vscode/
 .idea/
+
+# Uploaded video files (kept on the server disk)
+backend/storage/videos/
