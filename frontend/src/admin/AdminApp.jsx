@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import './admin.css';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
@@ -41,6 +42,8 @@ function GuestOnly({ children }) {
 }
 
 export default function AdminApp() {
+  useEffect(() => { document.title = 'OG Creations | Admin Panel'; }, []);
+
   return (
     <AuthProvider>
       <ToastProvider>
