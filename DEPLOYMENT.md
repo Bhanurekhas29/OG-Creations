@@ -176,8 +176,7 @@ The local database is separate from the live one. Changes you make in your local
 
 ## 8. Things that do not work yet
 
-- **Emails.** The free Render plan blocks normal email (SMTP), so out of the box no email is sent. The contact form still saves every message in **Enquiries**.
-  To turn emails on, open **Email Settings** (Authentication & Authorization menu) and choose **Brevo**: create a free account at brevo.com, verify your sender email, create an API key, paste it in Email Settings, save, then use **Send test email**. Brevo works on the free Render plan. "SMTP" (for example Gmail with an App Password) works on your own computer or a paid host. If you forget the admin password, reset it with the steps in section 9.
+- **Emails.** Open **Email Settings** (Authentication & Authorization menu) and enter your SMTP details. For Gmail use the **Fill in Gmail settings** button, your Gmail address as username, and a Google App Password. Then press **Send test email**. Every contact-form message is also saved in **Enquiries**. If you forget the admin password, reset it with the steps in section 9.
 - **Video files.** Videos are played from YouTube or Vimeo links. Do not upload video files.
 
 ---

@@ -2,18 +2,12 @@ import { useEffect, useState } from 'react';
 import { api } from '../api.js';
 import { useNotice } from '../components/Toast.jsx';
 
-const METHODS = {
-  php: 'PHP mail - the simplest. Works only on servers that have a mail service (not on Render\'s free plan).',
-  smtp: 'SMTP - use any mail account (Gmail, your domain mail). Not available on Render\'s free plan, which blocks SMTP.',
-  brevo: 'Brevo - free web service that sends the mail for you. Works everywhere, including Render\'s free plan.',
-};
-
 export default function EmailSettings() {
   const [form, setForm] = useState({
-    mail_method: 'php', mail_from_name: '', mail_from_email: '',
-    smtp_host: '', smtp_port: '587', smtp_secure: 'tls', smtp_user: '', smtp_pass: '', brevo_key: '',
+    mail_from_name: '', mail_from_email: '',
+    smtp_host: '', smtp_port: '587', smtp_secure: 'tls', smtp_user: '', smtp_pass: '',
   });
-  const [saved, setSaved] = useState({ smtp_pass_set: false, brevo_key_set: false });
+  const [saved, setSaved] = useState({ smtp_pass_set: false });
   const [fieldErrors, setFieldErrors] = useState({});
   const [, setMsg] = useNotice('success');
   const [, setError] = useNotice('error');
@@ -22,9 +16,9 @@ export default function EmailSettings() {
   const [testing, setTesting] = useState(false);
 
   const load = (d) => {
-    const { smtp_pass_set, brevo_key_set, ...rest } = d;
-    setForm((f) => ({ ...f, ...rest, smtp_pass: '', brevo_key: '' }));
-    setSaved({ smtp_pass_set, brevo_key_set });
+    const { smtp_pass_set, ...rest } = d;
+    setForm((f) => ({ ...f, ...rest, smtp_pass: '' }));
+    setSaved({ smtp_pass_set });
   };
 
   useEffect(() => {
@@ -70,18 +64,7 @@ export default function EmailSettings() {
     <>
       <form className="panel" onSubmit={submit}>
         <h3>Email Settings</h3>
-        <p className="muted">Choose how the website sends email: contact-form notifications and password-reset links.</p>
-
-        <label className="field">
-          <span>How should emails be sent?</span>
-          <select value={form.mail_method} onChange={set('mail_method')}>
-            <option value="php">PHP mail</option>
-            <option value="smtp">SMTP (Gmail or any mail account)</option>
-            <option value="brevo">Brevo (free, works on Render)</option>
-          </select>
-          <small>{METHODS[form.mail_method]}</small>
-          {err('mail_method')}
-        </label>
+        <p className="muted">The website sends email (contact-form notifications and password-reset links) through your SMTP mail account.</p>
 
         <label className="field">
           <span>From name</span>
@@ -91,12 +74,15 @@ export default function EmailSettings() {
         <label className="field">
           <span>From email</span>
           <input type="email" value={form.mail_from_email} onChange={set('mail_from_email')} />
-          <small>With Gmail or Brevo this must be an address you own / have verified there.</small>
+          <small>With Gmail this must be the same address as the username.</small>
           {err('mail_from_email')}
         </label>
 
-        {form.mail_method === 'smtp' && (
-          <>
+        <>
+            <button type="button" className="btn" style={{ marginBottom: '1rem' }}
+              onClick={() => setForm({ ...form, smtp_host: 'smtp.gmail.com', smtp_port: '587', smtp_secure: 'tls', smtp_user: form.smtp_user || form.mail_from_email })}>
+              Fill in Gmail settings
+            </button>
             <label className="field">
               <span>SMTP host</span>
               <input value={form.smtp_host} onChange={set('smtp_host')} placeholder="smtp.gmail.com" />
@@ -122,28 +108,16 @@ export default function EmailSettings() {
               {err('smtp_user')}
             </label>
             <label className="field">
-              <span>SMTP password {saved.smtp_pass_set && <b>(already saved)</b>}</span>
+              <span>Gmail App Password {saved.smtp_pass_set && <b>(already saved)</b>}</span>
               <input type="password" value={form.smtp_pass} onChange={set('smtp_pass')} autoComplete="new-password"
                 placeholder={saved.smtp_pass_set ? 'Leave empty to keep the saved password' : ''} />
-              <small>For Gmail use host smtp.gmail.com, port 587, TLS, and a Google "App Password".</small>
             </label>
           </>
-        )}
-
-        {form.mail_method === 'brevo' && (
-          <label className="field">
-            <span>Brevo API key {saved.brevo_key_set && <b>(already saved)</b>}</span>
-            <input type="password" value={form.brevo_key} onChange={set('brevo_key')} autoComplete="new-password"
-              placeholder={saved.brevo_key_set ? 'Leave empty to keep the saved key' : ''} />
-            <small>Create a free Brevo account, verify your sender email, then copy an API key (SMTP &amp; API → API Keys).</small>
-            {err('brevo_key')}
-          </label>
-        )}
 
         <button className="btn btn-primary" disabled={busy}>{busy ? 'Saving…' : 'Save changes'}</button>
       </form>
 
-      <div className="panel">
+      <div className="panel" style={{ marginTop: '1.5rem' }}>
         <h3>Send a test email</h3>
         <p className="muted">Save your settings first, then send a test to check that they work.</p>
         <label className="field">

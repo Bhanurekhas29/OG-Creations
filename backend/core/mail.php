@@ -2,23 +2,19 @@
 declare(strict_types=1);
 
 /**
- * Email sending. The method is chosen in the admin (Email Settings):
- *   php    - PHP mail() (works on some hosts; not on Render's free plan)
- *   smtp   - any SMTP server (Gmail, your domain's mail...). Free Render blocks SMTP ports.
- *   brevo  - Brevo's web API (free plan, works on Render's free plan because it uses https)
+ * Email sending through SMTP (Gmail, your domain's mail...), set up in the admin under Email Settings.
  * In debug mode every message is also written to backend/storage/mail.log.
  */
 
 const MAIL_SETTING_KEYS = [
-    'mail_method', 'mail_from_name', 'mail_from_email',
-    'smtp_host', 'smtp_port', 'smtp_secure', 'smtp_user', 'smtp_pass', 'brevo_key',
+    'mail_from_name', 'mail_from_email',
+    'smtp_host', 'smtp_port', 'smtp_secure', 'smtp_user', 'smtp_pass',
 ];
 
 function mail_settings(): array
 {
     $s = get_settings(MAIL_SETTING_KEYS);
     return $s + [
-        'mail_method'     => 'php',
         'mail_from_name'  => (string) config('mail.from_name'),
         'mail_from_email' => (string) config('mail.from'),
         'smtp_host'       => '',
@@ -26,7 +22,6 @@ function mail_settings(): array
         'smtp_secure'     => 'tls',
         'smtp_user'       => '',
         'smtp_pass'       => '',
-        'brevo_key'       => '',
     ];
 }
 
@@ -60,65 +55,11 @@ function send_mail(string $to, string $subject, string $body, ?string &$error = 
     }
 
     try {
-        switch ($m['mail_method']) {
-            case 'smtp':
-                return smtp_send($m, $fromEmail, $fromName, $to, $subject, $body, $error);
-            case 'brevo':
-                return brevo_send((string) $m['brevo_key'], $fromEmail, $fromName, $to, $subject, $body, $error);
-            default:
-                $headers = "From: " . ($fromName !== '' ? '=?UTF-8?B?' . base64_encode($fromName) . '?= ' : '') . "<$fromEmail>\r\n"
-                         . "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8";
-                $ok = @mail($to, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, $headers);
-                if (!$ok) {
-                    $error = 'PHP mail() could not send the message (this server has no mail service). Choose SMTP or Brevo in Email Settings.';
-                }
-                return $ok;
-        }
+        return smtp_send($m, $fromEmail, $fromName, $to, $subject, $body, $error);
     } catch (Throwable $e) {
         $error = $e->getMessage();
         return false;
     }
-}
-
-// ---- Brevo (HTTPS API) ------------------------------------------------------
-
-function brevo_send(string $apiKey, string $fromEmail, string $fromName, string $to, string $subject, string $body, ?string &$error): bool
-{
-    if ($apiKey === '') {
-        $error = 'Add your Brevo API key in Email Settings.';
-        return false;
-    }
-    $payload = json_encode([
-        'sender'      => ['name' => $fromName !== '' ? $fromName : $fromEmail, 'email' => $fromEmail],
-        'to'          => [['email' => $to]],
-        'subject'     => $subject,
-        'textContent' => $body,
-    ], JSON_UNESCAPED_UNICODE);
-
-    $ctx = stream_context_create(['http' => [
-        'method'        => 'POST',
-        'header'        => "api-key: $apiKey\r\nContent-Type: application/json\r\nAccept: application/json\r\n",
-        'content'       => $payload,
-        'timeout'       => 15,
-        'ignore_errors' => true,
-    ]]);
-    $response = @file_get_contents('https://api.brevo.com/v3/smtp/email', false, $ctx);
-    $status = 0;
-    foreach (($http_response_header ?? []) as $h) {
-        if (preg_match('#^HTTP/\S+\s+(\d{3})#', $h, $mm)) {
-            $status = (int) $mm[1];
-        }
-    }
-    if ($response === false && $status === 0) {
-        $error = 'Could not reach Brevo. Check the server\'s internet connection.';
-        return false;
-    }
-    if ($status >= 200 && $status < 300) {
-        return true;
-    }
-    $detail = json_decode((string) $response, true);
-    $error = 'Brevo said: ' . ($detail['message'] ?? ('HTTP ' . $status));
-    return false;
 }
 
 // ---- SMTP ---------------------------------------------------------------------
@@ -139,7 +80,7 @@ function smtp_send(array $m, string $fromEmail, string $fromName, string $to, st
     $ctx = stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true, 'SNI_enabled' => true]]);
     $fp = @stream_socket_client(($secure === 'ssl' ? 'ssl://' : 'tcp://') . "$host:$port", $errno, $errstr, 12, STREAM_CLIENT_CONNECT, $ctx);
     if (!$fp) {
-        $error = "Could not connect to $host:$port ($errstr). On Render's free plan SMTP ports are blocked - use Brevo instead.";
+        $error = "Could not connect to $host:$port ($errstr).";
         return false;
     }
     stream_set_timeout($fp, 15);
