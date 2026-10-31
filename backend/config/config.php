@@ -22,7 +22,7 @@ $config = [
         'token_ttl_hours'   => 12,
         'reset_ttl_minutes' => 30,
         // Video files are saved on the server's disk, so turn this off (VIDEO_UPLOADS=0) on hosts whose disk is wiped on restart (Render free).
-        'video_uploads'     => true,
+        'video_uploads'     => getenv('RENDER') === false,   // Render sets RENDER=true, so uploads are off there automatically
         'max_video_mb'      => 30,
     ],
     'mail' => [

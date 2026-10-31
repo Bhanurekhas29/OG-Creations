@@ -78,6 +78,7 @@ export default function Works() {
   const load = useCallback(() => api('admin/works').then((r) => setItems(r.data)), []);
   useEffect(() => {
     load();
+    api('admin/video-upload-info').then((r) => setVideoInfo(r.data)).catch(() => {});
     api('admin/works-header').then((r) => setCategories(r.data.works_categories.split('\n').filter(Boolean)));
   }, [load]);
 
